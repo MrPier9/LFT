@@ -76,9 +76,23 @@ public class Valutatore {
                                 term_val = term();
                                 exprp_val = exprp(exprp_i + term_val);
                                 break;
+                        case '-':
+                                match('-');
+                                term_val = term();
+                                exprp_val = exprp(exprp_i - term_val);
+                                break;
+                        case ')':
+                        case -1:
+                                exprp_val = exprp_i;
+                                break;
+                        default:
+                                exprp_val = 0;
+                                error("Syntax error in exprp");
+                                break;
 
                         // ... completare ...
                 }
+                return exprp_val;
         }
 
         private int term() {
