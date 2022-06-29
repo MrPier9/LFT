@@ -58,13 +58,14 @@ public class Valutatore {
                         case Tag.NUM:
                                 term_val = term();
                                 exprp_val = exprp(term_val);
-                                return exprp_val;
+                                break;
                         default:
+                                exprp_val = 0;
                                 error("Syntax error in expr");
-                                return 0;
+                                break;
                 }
                 // ... completare ...
-
+                return exprp_val;
         }
 
         private int exprp(int exprp_i) {
