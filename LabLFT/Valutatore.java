@@ -53,12 +53,18 @@ public class Valutatore {
                 int term_val, exprp_val;
 
                 // ... completare ...
-
-                term_val = term();
-                exprp_val = exprp(term_val);
-
+                switch (look.tag) {
+                        case '(':
+                        case Tag.NUM:
+                                term_val = term();
+                                exprp_val = exprp(term_val);
+                                return exprp_val;
+                        default:
+                                error("Syntax error in expr");
+                                return 0;
+                }
                 // ... completare ...
-                return exprp_val;
+
         }
 
         private int exprp(int exprp_i) {
