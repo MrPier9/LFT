@@ -35,12 +35,17 @@ public class Valutatore {
                 int expr_val;
 
                 // ... completare ...
+                switch (look.tag) {
+                        case '(':
+                        case Tag.NUM:
+                                expr_val = expr();
+                                match(Tag.EOF);
 
-                expr_val = expr();
-                match(Tag.EOF);
-
-                System.out.println(expr_val);
-
+                                System.out.println(expr_val);
+                                break;
+                        default:
+                                error("Syntax error in start");
+                }
                 // ... completare ...
         }
 
