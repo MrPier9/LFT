@@ -97,6 +97,18 @@ public class Valutatore {
 
         private int term() {
                 // ... completare ...
+                int termp_i, term_val;
+                switch (look.tag) {
+                        case '(':
+                        case Tag.NUM:
+                                termp_i = fact();
+                                term_val = termp(termp_i);
+                                break;
+                        default:
+                                term_val = 0;
+                                error("Syntax error in term");
+                }
+                return term_val;
         }
 
         private int termp(int termp_i) {
