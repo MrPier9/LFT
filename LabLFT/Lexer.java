@@ -43,7 +43,8 @@ public class Lexer {
                 s = s + next_peek;
                 next_peek = ' ';
                 int num = Integer.valueOf(s);
-                return new NumberTok(num);
+                NumberTok.setVal(num);
+                return NumberTok.num;
             }
 
         }
@@ -258,7 +259,8 @@ public class Lexer {
                             next_peek = ' ';
                             flag = false;
                             int num = Integer.valueOf(s);
-                            return new NumberTok(num);
+                            NumberTok.setVal(num);
+                            return NumberTok.num;
                         }
                     }
                     old_peek = peek;
@@ -284,7 +286,8 @@ public class Lexer {
                         }
                     }
                     n = Integer.valueOf(s);
-                    return new NumberTok(n);
+                    NumberTok.setVal(n);
+                    return NumberTok.num;
                 } else {
                     System.err.println("Erroneous character: "
                             + peek);
