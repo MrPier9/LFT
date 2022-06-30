@@ -14,7 +14,6 @@ public class Valutatore {
         void move() {
                 // come in Esercizio 3.1
                 look = lex.lexical_scan(pbr);
-                System.out.println("token = " + look);
         }
 
         void error(String s) {
@@ -40,13 +39,13 @@ public class Valutatore {
                         case Tag.NUM:
                                 expr_val = expr();
                                 match(Tag.EOF);
-
-                                System.out.println(expr_val);
                                 break;
                         default:
+                                expr_val = -1;
                                 error("Syntax error in start");
                 }
                 // ... completare ...
+                System.out.println(expr_val);
         }
 
         private int expr() {
@@ -113,15 +112,56 @@ public class Valutatore {
 
         private int termp(int termp_i) {
                 // ... completare ...
+                int fact_val, termp_val;
+                switch (look.tag) {
+                        case '*':
+                                match('*');
+                                fact_val = fact();
+                                termp_val = termp(termp_i * fact_val);
+                                break;
+                        case '/':
+                                match('/');
+                                fact_val = fact();
+                                termp_val = termp(termp_i / fact_val);
+                                break;
+                        case '+':
+                        case '-':
+                        case ')':
+                        case -1:
+                                termp_val = termp_i;
+                                break;
+                        default:
+                                termp_val = 0;
+                                error("Syntax error in termp");
+                                break;
+                }
+                return termp_val;
         }
 
         private int fact() {
                 // ... completare ...
+                int fact_val, expr_val;
+                switch (look.tag) {
+                        case '(':
+                                match('(');
+                                expr_val = expr();
+                                match(')');
+                                fact_val = expr_val;
+                                break;
+                        case Tag.NUM:
+                                match(Tag.NUM);
+                                fact_val = NumberTok.getVal();
+                                break;
+                        default:
+                                fact_val = 0;
+                                error("Syntax error in fact");
+                }
+                return fact_val;
         }
 
         public static void main(String[] args) {
                 Lexer lex = new Lexer();
-                String path = "...path..."; // il percorso del file da leggere
+                String path = "./prova2.txt"; // il percorso del file da leggere
                 try {
                         BufferedReader br = new BufferedReader(new FileReader(path));
                         Valutatore valutatore = new Valutatore(lex, br);
