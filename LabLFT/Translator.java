@@ -17,29 +17,49 @@ public class Translator {
 
     void move() {
         // come in Esercizio 3.1
+        look = lex.lexical_scan(pbr);
     }
 
     void error(String s) {
         // come in Esercizio 3.1
+        throw new Error("near line " + lex.line + ": " + s);
     }
 
     void match(int t) {
         // come in Esercizio 3.1
+        if (look.tag == t) {
+            if (look.tag != Tag.EOF)
+                move();
+        } else
+            error("syntax error");
     }
 
     public void prog() {
         // ... completare ...
+
         int lnext_prog = code.newLabel();
-        statlist(lnext_prog);
-        code.emitLabel(lnext_prog);
-        match(Tag.EOF);
-        try {
-            code.toJasmin();
-        } catch (java.io.IOException e) {
-            System.out.println("IO error\n");
+        switch (look.tag) {
+            case Tag.ASSIGN:
+            case Tag.PRINT:
+            case Tag.READ:
+            case Tag.WHILE:
+            case Tag.IF:
+            case '}':
+                statlist(lnext_prog);
+                code.emitLabel(lnext_prog);
+                match(Tag.EOF);
+                try {
+                    code.toJasmin();
+                } catch (java.io.IOException e) {
+                    System.out.println("IO error\n");
+                }
+            default:
+                error("Syntax error in prog");
         }
-        ;
         // ... completare ...
+    }
+
+    private void statlist(int lnext_prog) {
     }
 
     public void stat( /* completare */ ) {
