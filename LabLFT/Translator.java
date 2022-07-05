@@ -37,7 +37,6 @@ public class Translator {
     public void prog() {
         // ... completare ...
 
-        int lnext_prog = code.newLabel();
         switch (look.tag) {
             case Tag.ASSIGN:
             case Tag.PRINT:
@@ -45,6 +44,7 @@ public class Translator {
             case Tag.WHILE:
             case Tag.IF:
             case '}':
+                int lnext_prog = code.newLabel();
                 statlist(lnext_prog);
                 code.emitLabel(lnext_prog);
                 match(Tag.EOF);
