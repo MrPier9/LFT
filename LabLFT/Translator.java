@@ -18,18 +18,15 @@ public class Translator {
     }
 
     void move() {
-        // come in Esercizio 3.1
         look = lex.lexical_scan(pbr);
         System.out.println("token = " + look);
     }
 
     void error(String s) {
-        // come in Esercizio 3.1
         throw new Error("near line " + lex.line + ": " + s);
     }
 
     void match(int t) {
-        // come in Esercizio 3.1
         if (look.tag == t) {
             if (look.tag != Tag.EOF)
                 move();
@@ -38,8 +35,6 @@ public class Translator {
     }
 
     public void prog() {
-        // ... completare ...
-
         switch (look.tag) {
             case Tag.ASSIGN:
             case Tag.PRINT:
@@ -60,7 +55,6 @@ public class Translator {
             default:
                 error("Syntax error in prog");
         }
-        // ... completare ...
     }
 
     private void statlist(int nextstatlist_i) {
@@ -102,10 +96,9 @@ public class Translator {
         }
     }
 
-    public void stat( /* completare */int nextstat_i) {
+    public void stat(int nextstat_i) {
         int lnext_t, lnext_while, lnext_f;
         switch (look.tag) {
-            // ... completare ...
             case Tag.ASSIGN:
                 if (nextstat_i != 0)
                     code.emitLabel(nextstat_i);
@@ -114,7 +107,6 @@ public class Translator {
                 match(Tag.TO);
                 idlist(Tag.ASSIGN);
                 break;
-
             case Tag.READ:
                 if (nextstat_i != 0)
                     code.emitLabel(nextstat_i);
@@ -124,7 +116,6 @@ public class Translator {
                 idlist(/* completare */Tag.READ);
                 match(')');
                 break;
-
             case Tag.PRINT:
                 if (nextstat_i != 0)
                     code.emitLabel(nextstat_i);
@@ -134,7 +125,6 @@ public class Translator {
                 match(')');
                 code.emit(OpCode.invokestatic, 1);
                 break;
-
             case Tag.WHILE:
                 if (nextstat_i != 0)
                     lnext_while = nextstat_i;
@@ -152,7 +142,6 @@ public class Translator {
                 code.emit(OpCode.GOto, lnext_while);
                 code.emitLabel(lnext_f);
                 break;
-
             case Tag.IF:
                 if (nextstat_i != 0)
                     code.emitLabel(nextstat_i);
@@ -164,9 +153,10 @@ public class Translator {
                 lnext_f = code.newLabel();
                 code.emit(OpCode.GOto, lnext_f);
                 stat(lnext_t);
-                statp(lnext_f);
+                int lnext = code.newLabel();
+                code.emit(OpCode.GOto, lnext);
+                statp(lnext_f, lnext);
                 break;
-
             case '{':
                 flag = false;
                 match('{');
@@ -176,27 +166,30 @@ public class Translator {
                 break;
             default:
                 error("Syntax error in stat");
-                // ... completare ...
         }
     }
 
-    private void statp(int lnext_statlistp) {
+    private void statp(int lnext_f, int lnext) {
         switch (look.tag) {
             case Tag.END:
                 match(Tag.END);
-                code.emitLabel(lnext_statlistp);
+                code.emitLabel(lnext_f);
+                code.emit(OpCode.GOto, lnext);
+                code.emitLabel(lnext);
                 break;
             case Tag.ELSE:
                 match(Tag.ELSE);
-                stat(lnext_statlistp);
+                stat(lnext_f);
                 match(Tag.END);
+                code.emit(OpCode.GOto, lnext);
+                code.emitLabel(lnext);
                 break;
             default:
                 error("Syntax error in statp");
         }
     }
 
-    private void idlist(/* completare */int opcode) {
+    private void idlist(int opcode) {
         switch (look.tag) {
             case Tag.ID:
                 int id_addr = st.lookupAddress(((Word) look).lexeme);
@@ -210,7 +203,6 @@ public class Translator {
                 break;
             default:
                 error("Syntax error in idlist");
-                // ... completare ...
         }
     }
 
@@ -273,10 +265,8 @@ public class Translator {
         }
     }
 
-    private void expr( /* completare */ ) {
-
+    private void expr() {
         switch (look.tag) {
-            // ... completare ...
             case '+':
                 match('+');
                 match('(');
@@ -288,7 +278,6 @@ public class Translator {
                 } else {
                     fexprlist = 0;
                 }
-                System.out.println(fexprlist);
                 break;
             case '-':
                 match('-');
@@ -307,7 +296,6 @@ public class Translator {
                 } else {
                     fexprlist = 0;
                 }
-                System.out.println(fexprlist);
                 break;
             case '/':
                 match('/');
@@ -316,9 +304,9 @@ public class Translator {
                 code.emit(OpCode.idiv);
                 break;
             case Tag.NUM:
-                match(Tag.NUM);
                 int numVal = NumberTok.getVal();
                 code.emit(OpCode.ldc, numVal);
+                match(Tag.NUM);
                 break;
             case Tag.ID:
                 int id_addr = st.lookupAddress(((Word) look).lexeme);
@@ -331,7 +319,6 @@ public class Translator {
                 break;
             default:
                 error("Syntax error in expr");
-                // ... completare ...
         }
     }
 
@@ -366,7 +353,6 @@ public class Translator {
         }
     }
 
-    // ... completare ...
     public static void main(String[] args) {
         Lexer lex = new Lexer();
         String path = "./es1.lft"; // il percorso del file da leggere
